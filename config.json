@@ -3,7 +3,7 @@
   "model": "coze",
   "api_base_url": "https://api.coze.cn/v1/workflow/run",
   "coze_api_key": "",
-  "coze_workflow_id": "7450450164181844022",
+  "coze_workflow_id": "",
   "text_to_image": "dall-e-3",
   "voice_to_text": "openai",
   "text_to_voice": "openai",

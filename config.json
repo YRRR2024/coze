@@ -2,7 +2,7 @@
   "channel_type": "wx",   
   "model": "coze",
   "api_base_url": "https://api.coze.cn/v1/workflow/run",
-  "coze_api_key": "pat_ZOdTDcUnXHX1vqeH400Mv8S4VQIRQhQbfUPAinquBotcwL5TEXfDMMK3ugU8ZCef",
+  "coze_api_key": "",
   "coze_workflow_id": "7450450164181844022",
   "text_to_image": "dall-e-3",
   "voice_to_text": "openai",

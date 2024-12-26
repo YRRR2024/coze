@@ -66,37 +66,31 @@ def _check(func):
 
     return wrapper
 
-
-# 可用的二维码生成接口
-# https://api.qrserver.com/v1/create-qr-code/?size=400×400&data=https://www.abc.com
-# https://api.isoyu.com/qr/?m=1&e=L&p=20&url=https://www.abc.com
 def qrCallback(uuid, status, qrcode):
     # logger.debug("qrCallback: {} {}".format(uuid,status))
     if status == "0":
-        try:
-            from PIL import Image
-
-            img = Image.open(io.BytesIO(qrcode))
-            _thread = threading.Thread(target=img.show, args=("QRCode",))
-            _thread.setDaemon(True)
-            _thread.start()
-        except Exception as e:
-            pass
-
         import qrcode
 
+        # 构造登录 URL
         url = f"https://login.weixin.qq.com/l/{uuid}"
 
+        # 创建多个二维码 API 链接
         qr_api1 = "https://api.isoyu.com/qr/?m=1&e=L&p=20&url={}".format(url)
         qr_api2 = "https://api.qrserver.com/v1/create-qr-code/?size=400×400&data={}".format(url)
         qr_api3 = "https://api.pwmqr.com/qrcode/create/?url={}".format(url)
         qr_api4 = "https://my.tv.sohu.com/user/a/wvideo/getQRCode.do?text={}".format(url)
+        
+        # 输出二维码链接
         print("You can also scan QRCode in any website below:")
         print(qr_api3)
         print(qr_api4)
         print(qr_api2)
         print(qr_api1)
+        
+        # 发送二维码链接
         _send_qr_code([qr_api3, qr_api4, qr_api2, qr_api1])
+        
+        # 生成 ASCII QR Code 并打印到终端
         qr = qrcode.QRCode(border=1)
         qr.add_data(url)
         qr.make(fit=True)
@@ -213,6 +207,12 @@ class WechatChannel(ChatChannel):
     def send(self, reply: Reply, context: Context):
         receiver = context["receiver"]
         if reply.type == ReplyType.TEXT:
+            try:
+                # 尝试解析 reply.content，提取 data 字段
+                content_json = json.loads(reply.content)
+                reply.content = content_json.get("data", reply.content)  # 提取 data 字段内容
+            except json.JSONDecodeError:
+                logger.warning("[WX] Unable to parse content as JSON, using raw content")
             reply.content = remove_markdown_symbol(reply.content)
             itchat.send(reply.content, toUserName=receiver)
             logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))
@@ -268,7 +268,7 @@ class WechatChannel(ChatChannel):
             video_storage.seek(0)
             itchat.send_video(video_storage, toUserName=receiver)
             logger.info("[WX] sendVideo url={}, receiver={}".format(video_url, receiver))
-
+            
 def _send_login_success():
     try:
         from common.linkai_client import chat_client

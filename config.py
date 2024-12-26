@@ -182,9 +182,11 @@ available_setting = {
     
         
     "model": "coze",
-    "coze_api_base": "https://api.coze.cn/open_api/v2",
+    "coze_api_base": "https://api.coze.cn/v1/workflow/run",
     "coze_api_key": "",
     "coze_bot_id": "",
+    "coze_workflow_id": "",
+    "api_base_url":""
 }
 
 
